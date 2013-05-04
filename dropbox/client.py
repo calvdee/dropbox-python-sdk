@@ -198,10 +198,9 @@ class DropboxClient(object):
 
             while self.last_block != '':
 
-                self.last_block = self.file_obj.read(chunk_size)
-
                 try:
                     (self.offset, self.upload_id) = self.client.upload_chunk(StringIO(self.last_block), chunk_size, self.offset, self.upload_id)
+                    self.last_block = self.file_obj.read(chunk_size)
                 except ErrorResponse, e:
                     reply = e.body
                     if "offset" in reply and reply['offset'] != 0:
