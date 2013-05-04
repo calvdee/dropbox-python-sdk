@@ -1,0 +1,25 @@
+.. toctree::
+    :maxdepth: 1
+
+DropboxClient
+=================================
+.. automodule:: dropbox.client
+.. autoclass:: DropboxClient
+    :members:
+
+
+DropboxSession
+==================================
+.. automodule:: dropbox.session
+.. autoclass:: DropboxSession
+    :members:
+
+REST Client
+==================================
+.. automodule:: dropbox.rest
+.. autoclass:: RESTClient
+    :members:
+.. autoclass:: ErrorResponse
+    :members:
+.. autoclass:: RESTSocketError
+    :members:
