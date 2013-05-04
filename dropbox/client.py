@@ -175,7 +175,7 @@ class DropboxClient(object):
         """Contains the logic around a chunked upload, which uploads a
         large file to Dropbox via the /chunked_upload endpoint
         """
-        def __init__(self, client, file_obj, length):
+        def __init__(self, client, file_obj, length=0):
             self.client = client
             self.offset = 0
             self.upload_id = None
@@ -194,20 +194,24 @@ class DropboxClient(object):
                 - ``chunk_size``: The number of bytes to put in each chunk. [default 4 MB]
             """
 
-            while self.offset < self.target_length:
-                next_chunk_size = min(chunk_size, self.target_length - self.offset)
-                if self.last_block == None:
-                    self.last_block = self.file_obj.read(next_chunk_size)
+            self.last_block = self.file_obj.read(chunk_size)
+
+            while self.last_block != '':
+
+                self.last_block = self.file_obj.read(chunk_size)
 
                 try:
-                    (self.offset, self.upload_id) = self.client.upload_chunk(StringIO(self.last_block), next_chunk_size, self.offset, self.upload_id)
-                    self.last_block = None
+                    (self.offset, self.upload_id) = self.client.upload_chunk(StringIO(self.last_block), chunk_size, self.offset, self.upload_id)
                 except ErrorResponse, e:
                     reply = e.body
                     if "offset" in reply and reply['offset'] != 0:
                         if reply['offset'] > self.offset:
                             self.last_block = None
                             self.offset = reply['offset']
+                    # ??
+                    raise e
+
+            self.last_block = None
 
         def finish(self, path, overwrite=False, parent_rev=None):
             """Commits the bytes uploaded by this ChunkedUploader to a file
