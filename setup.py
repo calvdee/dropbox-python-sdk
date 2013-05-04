@@ -12,7 +12,7 @@ if sys.version_info < (2, 6):
     INSTALL_REQUIRES.append('simplejson') # The 'json' module is included with Python 2.6+
     INSTALL_REQUIRES.append('ssl')  # This module is built in to Python 2.6+
 
-extra = {}`
+extra = {}
 if sys.version_info >= (3,):
     extra['use_2to3'] = True
 
