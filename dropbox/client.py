@@ -185,22 +185,31 @@ class DropboxClient(object):
             self.target_length = length
 
 
-        def upload_chunked(self, chunk_size = 4 * 1024 * 1024):
+        def upload_chunked(self, chunk_size = 4 * 1024 * 1024, cb=None):
             """Uploads data from this ChunkedUploader's file_obj in chunks, until
             an error occurs. Throws an exception when an error occurs, and can
             be called again to resume the upload.
 
             Args:
                 - ``chunk_size``: The number of bytes to put in each chunk. [default 4 MB]
+                - ``cb``: A callback that takes a single argument which is the total amount
+                          of bytes uploaded.
             """
 
             self.last_block = self.file_obj.read(chunk_size)
 
+            total = 0
             while self.last_block != '':
 
                 try:
                     (self.offset, self.upload_id) = self.client.upload_chunk(StringIO(self.last_block), chunk_size, self.offset, self.upload_id)
                     self.last_block = self.file_obj.read(chunk_size)
+
+                    total = total + len(self.last_block)
+
+                    if cb is not None:
+                        cb(total)
+
                 except ErrorResponse, e:
                     reply = e.body
                     if "offset" in reply and reply['offset'] != 0:
