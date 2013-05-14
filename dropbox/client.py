@@ -199,7 +199,7 @@ class DropboxClient(object):
             self.last_block = self.file_obj.read(chunk_size)
 
             total = 0
-            while self.last_block != '':
+            while len(self.last_block) is not 0:
 
                 try:
                     (self.offset, self.upload_id) = self.client.upload_chunk(StringIO(self.last_block), chunk_size, self.offset, self.upload_id)
